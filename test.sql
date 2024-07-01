@@ -461,108 +461,79 @@ go
                                       @total_amount = 5000000
 
 
--- ### Normalization (5 Marks)
+        -- ### Normalization (5 Marks)
 
--- 26. **Question:**
---     Given the denormalized table `ecommerce_data` with sample data:
+        -- 26. **Question:**
+        --     Given the denormalized table `ecommerce_data` with sample data:
 
--- | id  | customer_name | customer_email      | product_name | product_category | product_price | order_date | order_quantity | order_total_amount |
--- | --- | ------------- | ------------------- | ------------ | ---------------- | ------------- | ---------- | -------------- | ------------------ |
--- | 1   | Alice Johnson | alice@example.com   | Laptop       | Electronics      | 1200.00       | 2023-01-10 | 1              | 1200.00            |
--- | 2   | Bob Smith     | bob@example.com     | Smartphone   | Electronics      | 800.00        | 2023-01-15 | 2              | 1600.00            |
--- | 3   | Alice Johnson | alice@example.com   | Headphones   | Accessories      | 150.00        | 2023-01-20 | 2              | 300.00             |
--- | 4   | Charlie Brown | charlie@example.com | Desk Chair   | Furniture        | 200.00        | 2023-02-10 | 1              | 200.00             |
+        -- | id  | customer_name | customer_email      | product_name | product_category | product_price | order_date | order_quantity | order_total_amount |
+        -- | --- | ------------- | ------------------- | ------------ | ---------------- | ------------- | ---------- | -------------- | ------------------ |
+        -- | 1   | Alice Johnson | alice@example.com   | Laptop       | Electronics      | 1200.00       | 2023-01-10 | 1              | 1200.00            |
+        -- | 2   | Bob Smith     | bob@example.com     | Smartphone   | Electronics      | 800.00        | 2023-01-15 | 2              | 1600.00            |
+        -- | 3   | Alice Johnson | alice@example.com   | Headphones   | Accessories      | 150.00        | 2023-01-20 | 2              | 300.00             |
+        -- | 4   | Charlie Brown | charlie@example.com | Desk Chair   | Furniture        | 200.00        | 2023-02-10 | 1              | 200.00             |
 
--- Normalize this table into 3NF (Third Normal Form). Specify all primary keys, foreign key constraints, unique constraints, not null constraints, and check constraints.
+        -- Normalize this table into 3NF (Third Normal Form). Specify all primary keys, foreign key constraints, unique constraints, not null constraints, and check constraints.
 
--- ### ER Diagram (5 Marks)
+        -- ### ER Diagram (5 Marks)
 
--- 27. Using the normalized tables from Question 26, create an ER diagram. Include the entities, relationships, primary keys, foreign keys, unique constraints, not null constraints, and check constraints. Indicate the associations using proper ER diagram notation.
+        -- 27. Using the normalized tables from Question 26, create an ER diagram. Include the entities, relationships, primary keys, foreign keys, unique constraints, not null constraints, and check constraints. Indicate the associations using proper ER diagram notation.
 
--- Normalize this table into 3NF (Third Normal Form). Specify all primary keys, foreign key constraints, unique constraints, not null constraints, and check constraints.
+        -- Normalize this table into 3NF (Third Normal Form). Specify all primary keys, foreign key constraints, unique constraints, not null constraints, and check constraints.
 
--- Not Null
--- customer_name
--- customer_email
--- product_name
--- product_category
--- product_price
--- order_date
--- order_quantity
--- order_total_amount
--- Unique
--- customer_email
--- product_name, products.product_category (combined)
--- Check
--- product_price >= 0
--- order_quantity > 0
--- order_total_amount >= 0
--- ER Diagram (5 Marks)
--- Using the normalized tables from Question 26, create an ER diagram. Include the entities, relationships, primary keys, foreign keys, unique constraints, not null constraints, and check constraints. Indicate the associations using proper ER diagram notation.
+        -- Not Null
+        -- customer_name
+        -- customer_email
+        -- product_name
+        -- product_category
+        -- product_price
+        -- order_date
+        -- order_quantity
+        -- order_total_amount
+        -- Unique
+        -- customer_email
+        -- product_name, products.product_category (combined)
+        -- Check
+        -- product_price >= 0
+        -- order_quantity > 0
+        -- order_total_amount >= 0
+        -- ER Diagram (5 Marks)
+        -- Using the normalized tables from Question 26, create an ER diagram. Include the entities, relationships, primary keys, foreign keys, unique constraints, not null constraints, and check constraints. Indicate the associations using proper ER diagram notation.
 
-[1:27 PM]
-        Rajendra Venigalla
+
         CREATE TABLE [Customers table]
         (
-
             C_id int primary key,
-
             [customer_name] Varchar(20) not null,
-
             [customer_email] Varchar(20) unique
             ,
         );
-
         CREATE TABLE [Products]
         (
-
             [P_id] Int,
-
             [product_name] Varchar(20) unique,
-
             [product_price] int not null,
-
             [product_category] Varchar(20) ,
-
             PRIMARY KEY ([P_id])
-
         );
-
         CREATE TABLE [Orders]
         (
-
             [o_id] Int,
-
             [order_date] varchar(20),
-
             [order_quantity] varchar(20) not null,
-
             [order_total_amount] varchar(20),
-
             PRIMARY KEY ([o_id])
-
         );
-
         CREATE TABLE [Salestable]
         (
-
             [id] Int,
-
             [C_id] Int not null,
-
             [P_id] Int not null,
-
             [o_id] Int not null ,
-
             PRIMARY KEY ([id]),
-
             FOREIGN KEY ([C_id]) REFERENCES [Customers table](id),
-
             FOREIGN KEY ([P_id]) REFERENCES [Products]([P_id]),
-
             FOREIGN KEY ([o_id]) REFERENCES [Orders]([o_id])
-
-
         );
 
  
