@@ -45,10 +45,10 @@ VALUES
     (2, 'Guernica', 2, 'Cubism', 2000000.00),
     (3, 'Mona Lisa', 3, 'Renaissance', 3000000.00),
     (4, 'Water Lilies', 4, 'Impressionism', 500000.00),
-    (5, 'The Persistence of Memory', 5, 'Surrealism', 1500000.00);
+    (5, 'The Persistence of Memory', 5, 'Surrealism', 1500000.00),
 
-(6, 'hey', 1, 'Post-Impressionism', 2500000.00),
-(7, 'hello1', 2, 'Renaissance', 3500000.00)
+    (6, 'hey', 1, 'Post-Impressionism', 2500000.00),
+    (7, 'hello1', 2, 'Renaissance', 3500000.00);
 INSERT INTO artworks
     (artwork_id, title, artist_id, genre, price)
 VALUES
@@ -78,14 +78,12 @@ from sales
 -- ### Section 1: 1 mark each
 
 -- 1. Write a query to calculate the price of 'Starry Night' plus 10% tax.
-select price + 1.10
+select price * 1.10
 from artworks
 where title ='Starry Night'
 
-
-
 -- 2. Write a query to display the artist names in uppercase.
-select name, upper (name) as upper_cased_names
+select name, upper(name) as upper_cased_names
 from artists
 
 
@@ -297,11 +295,11 @@ from CreatedArtworksMultipleGenres
 -- 17. Write a query to find artworks that have a higher price than the average price of artworks by the same artist.
 select artwork_id, price
 from artworks
-
 where price >
  (select avg(price ) as average
 from artworks
 group by artist_id)
+
 
 -- 18. Write a query to find the average price of artworks for each artist and only include artists whose average artwork price is higher than the overall average artwork price.
 
@@ -310,9 +308,9 @@ with
     as
 
     (
-        select avg(price )as average
-        from artworks
-        group by artist_id
+        select a.title, avg(price )as average
+        from artworks a
+        group by artist_id, a.title
     )
 select *
 from cte6
@@ -339,7 +337,8 @@ from artworks a1
 for xml path('Artworks') , root('artist')
     -- 20. Write a query to convert the artists and their artworks into JSON format.
 
-    select a1.artwork_id, a.name, a.artist_id  , json_query((select a2.title
+    select a1.artwork_id, a.name, a.artist_id  , json_query((
+        select a2.title
         from artworks a2
         where a2.artist_id = a.artist_id
         for json path) ) as artists
@@ -347,13 +346,12 @@ for xml path('Artworks') , root('artist')
         join artists a
         on a.artist_id = a1.artist_id
     for json path('Artworks')
+
 -- ### Section 5: 5 Marks Questions
 
 -- 21. Create a multi-statement table-valued function (MTVF) to return the total quantity sold for each genre and use it in a query to display the results.
 go
-        create function totalquantitysoldforeachgenre(
-    @genre varchar(50)
-)
+        create function totalquantitysoldforeachgenre()
 returns @new table 
 
 (genre1 varchar(50),
@@ -365,15 +363,15 @@ BEGIN
             from sales s
                 join artworks a
                 on 
-  a.artwork_id = s.artwork_id
-            where a.genre = @genre
+        a.artwork_id = s.artwork_id
+
             group by a.genre
             RETURN
+
         END
 go
         select *
-        from totalquantitysoldforeachgenre('Renaissance')
-
+        from totalquantitysoldforeachgenre()
 
 
         -- 22. Create a scalar function to calculate the average sales amount for artworks in a given genre and write a query to use this function for 'Impressionism'.
@@ -390,6 +388,7 @@ RETURN
             join artworks a
             on a.artwork_id = s.artwork_id
         where genre = @genre
+
         return @new
 
         )
@@ -398,23 +397,28 @@ RETURN
         -- 23. Write a query to create an NTILE distribution of artists based on their total sales, divided into 4 tiles.
 
         -- 24. Create a trigger to log changes to the `artworks` table into an `artworks_log` table, capturing the `artwork_id`, `title`, and a change description.
-        create table artworks_log
+
+
+        create table artworks_log1
         (
             artwork_id int ,
-            title varchar(50)
+            title varchar(50),
+            descp varchar(50)
         )
-        create trigger tx_logchanges
+ 
+go
+        create trigger log_changes
 on artworks
-after insert
-        begin
+after update
+as
+begin
+            insert into artworks_log1
+            select artwork_id, title, 'the description'
+            from inserted
+        end
 
-            update artworks 
-   set artwork_id = 9,
-   title = 'harrypotter'
-   where artwork_id = 8
-        END
-
-
+select *
+        from artworks_log1
 
 -- 25. Create a stored procedure to add a new sale and update the total sales for the artwork. Ensure the quantity is positive, and use transactions to maintain data integrity.
 go
