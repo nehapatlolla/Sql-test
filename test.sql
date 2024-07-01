@@ -1,6 +1,6 @@
 ### Schemas
-create database test
-use test
+create database test1
+use test1
 CREATE TABLE artists
 (
     artist_id INT PRIMARY KEY,
@@ -262,7 +262,7 @@ intersect
 with
     cte5
     as
-    
+
     (
         select artist_id, avg(price) as average
         from artworks
@@ -308,7 +308,7 @@ group by artist_id)
 with
     cte6
     as
-    
+
     (
         select avg(price )as average
         from artworks
@@ -407,38 +407,14 @@ RETURN
 on artworks
 after insert
         begin
-            declare @totalSales decimal (10,2),
-            @bookid int
-            select @totalSales = sum(total_amount),
-                @bookid = book_id
-            from inserted
-            group by book_id
+
             update artworks 
    set artwork_id = 9,
    title = 'harrypotter'
    where artwork_id = 8
         END
 
-        create trigger TX_updateTotal
-on artworks 
-after insert
-AS 
-Begin
-            declare @totalSales decimal (10,2),
-            @bookid int
-            select @totalSales = sum(total_amount),
-                @bookid = book_id
-            from inserted
-            group by book_id
 
-            update books
-    set total_sales = isnull(total_sales,0) + @totalSales
-    where book_id = @bookid
-
-        end
-
-insert into sales
-        values(12, 2, getdate(), 2, 65)
 
 -- 25. Create a stored procedure to add a new sale and update the total sales for the artwork. Ensure the quantity is positive, and use transactions to maintain data integrity.
 go
@@ -524,3 +500,69 @@ go
 -- ER Diagram (5 Marks)
 -- Using the normalized tables from Question 26, create an ER diagram. Include the entities, relationships, primary keys, foreign keys, unique constraints, not null constraints, and check constraints. Indicate the associations using proper ER diagram notation.
 
+[1:27 PM]
+        Rajendra Venigalla
+        CREATE TABLE [Customers table]
+        (
+
+            C_id int primary key,
+
+            [customer_name] Varchar(20) not null,
+
+            [customer_email] Varchar(20) unique
+            ,
+        );
+
+        CREATE TABLE [Products]
+        (
+
+            [P_id] Int,
+
+            [product_name] Varchar(20) unique,
+
+            [product_price] int not null,
+
+            [product_category] Varchar(20) ,
+
+            PRIMARY KEY ([P_id])
+
+        );
+
+        CREATE TABLE [Orders]
+        (
+
+            [o_id] Int,
+
+            [order_date] varchar(20),
+
+            [order_quantity] varchar(20) not null,
+
+            [order_total_amount] varchar(20),
+
+            PRIMARY KEY ([o_id])
+
+        );
+
+        CREATE TABLE [Salestable]
+        (
+
+            [id] Int,
+
+            [C_id] Int not null,
+
+            [P_id] Int not null,
+
+            [o_id] Int not null ,
+
+            PRIMARY KEY ([id]),
+
+            FOREIGN KEY ([C_id]) REFERENCES [Customers table](id),
+
+            FOREIGN KEY ([P_id]) REFERENCES [Products]([P_id]),
+
+            FOREIGN KEY ([o_id]) REFERENCES [Orders]([o_id])
+
+
+        );
+
+ 
